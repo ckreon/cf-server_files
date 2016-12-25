@@ -1,0 +1,50 @@
+# cape-faeria server configuration
+#
+
+server {
+	listen 80;
+	server_name capefaeria.com www.capefaeria.com;
+
+	root /var/www/cape-faeria/_site/;
+	index index.html;
+
+	client_max_body_size 4G;
+	keepalive_timeout 10;
+
+	#Error configuration
+	error_page 401 403 404 /404.html;
+	error_page 500 502 503 504 /500.html;
+
+	# Logs
+	access_log /var/log/nginx/nginx.vhost.access.log;
+	error_log /var/log/nginx/nginx.vhost.error.log;
+
+	location / {
+		try_files $uri $uri/ =404;
+	}
+
+	# Cache your document html and data
+	location ~* \.(?:manifest|appcache|html?|xml|json)$ {
+  expires 10m;
+	}
+
+	# Media: images, fonts, icons, video, audio, HTC
+	location ~* \.(?:jpe?g|gif|png|ico|cur|gz|svg|svgz|mp4|ogg|ogv|webm|htc|ttf|eot|woff2?|otf)$ {
+	access_log off;
+  expires max;
+  add_header Cache-Control "public";
+	}
+
+	# CSS and Javascript, PDF's
+	location ~* \.(?:css|js|pdf)$ {
+  expires max;
+  access_log off;
+  add_header Cache-Control "public";
+	}
+
+	# Feed
+	#location ~* \.(?:rss|atom)$ {
+  #expires 1h;
+  #add_header Cache-Control "public";
+	#}
+}
